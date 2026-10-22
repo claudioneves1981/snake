@@ -32,7 +32,7 @@ snake = [
     [7,10]
 ]
 
-direction = (0,0)
+direction = (0,1)
 
 score = 0
 
@@ -114,23 +114,25 @@ def move_ai():
     global direction
 
     hx, hy = snake[0]
-    fx, fy = food
-
+    
     options = []
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP] and direction != (0, 1):
+    if keys[pygame.K_UP]:
         options.append((0,-1))
-        direction = (0, -1)
-    elif keys[pygame.K_DOWN] and direction != (0, -1):
+       
+        
+    elif keys[pygame.K_DOWN]:
         options.append((0, 1))
-        direction = (0, 1)
-    elif keys[pygame.K_LEFT] and direction != (1, 0):
+        
+    elif keys[pygame.K_LEFT]:
         options.append((-1, 0))
-        direction = (-1, 0)
-    elif keys[pygame.K_RIGHT] and direction!= (-1, 0):
+        
+        
+    elif keys[pygame.K_RIGHT]:
        options.append((1, 0))  
-       direction = (1, 0)     
+       
+       
 
     options.extend([
         (0,-1),
@@ -150,6 +152,7 @@ def move_ai():
         if [nx, ny] in snake[:-1]:
             continue
 
+    
         direction = (dx, dy)
         return
 
@@ -169,95 +172,95 @@ while running:
     dx, dy = direction
 
 
-    #if direction != (0,0):
+    if direction != (0,0):
 
-    new_head = [hx + dx, hy + dy]
+        new_head = [hx + dx, hy + dy]
 
-    if (
-            new_head[0] < 0 or
-            new_head[0] >= COLS or
-            new_head[1] < 0 or
-            new_head[1] >= ROWS or
-            new_head in snake[:-1]
-        ):
-            snake[:] = [
-                [10, 10],
-                [9, 10],
-                [8, 10],
-                [7,10]
-            ]
-            direction = (0, 0)
-            score = 0
-            spawn_food()
-            continue
+        if (
+                new_head[0] < 0 or
+                new_head[0] >= COLS or
+                new_head[1] < 0 or
+                new_head[1] >= ROWS or
+                new_head in snake[:-1]
+            ):
+                snake[:] = [
+                    [10, 10],
+                    [9, 10],
+                    [8, 10],
+                    [7,10]
+                ]
+                direction = (0, 1)
+                score = 0
+                spawn_food()
+                continue
 
-    snake.insert(0,new_head)
+        snake.insert(0,new_head)
 
-    if new_head == food:
-            score += 1
-            spawn_food()
-    else:
-            snake.pop()
+        if new_head == food:
+                score += 1
+                spawn_food()
+        else:
+                snake.pop()
 
-    screen.fill(BLACK)
-    draw_grid()
-    draw_food()
-    draw_snake()
-    glow = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        screen.fill(BLACK)
+        draw_grid()
+        draw_food()
+        draw_snake()
+        glow = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
-    for part in snake:
+        for part in snake:
 
+            pygame.draw.circle(
+                glow,
+                (0,255,120,35),
+                    (
+                        part[0] * CELL + CELL // 2,
+                        part[1] * CELL + CELL // 2
+                    ),
+                    CELL
+                )
         pygame.draw.circle(
             glow,
-            (0,255,120,35),
+            (255,70,70,50),
                 (
-                    part[0] * CELL + CELL // 2,
-                    part[1] * CELL + CELL // 2
+                    food[0] * CELL + CELL // 2,
+                    food[1] * CELL + CELL // 2
                 ),
                 CELL
             )
-    pygame.draw.circle(
-        glow,
-        (255,70,70,50),
-            (
-                food[0] * CELL + CELL // 2,
-                food[1] * CELL + CELL // 2
-            ),
-            CELL
-        )
 
-    screen.blit(glow, (0,0))
+        screen.blit(glow, (0,0))
 
-    score_text = font.render(
+        score_text = font.render(
             f"Score : {score}",
             True,
             WHITE
         )
 
-    screen.blit(score_text,(15,15))
+        screen.blit(score_text,(15,15))
 
-    ai_text = font.render(
+        ai_text = font.render(
             "AI MODE",
             True,
             GREEN
         )
 
-    screen.blit(
+        screen.blit(
             ai_text,
             (WIDTH - ai_text.get_width() - 15, 15)
         )
 
-    fps_text = font.render(
+        fps_text = font.render(
             f"FPS : {int(clock.get_fps())}",
             True,
             WHITE
         )
 
-    screen.blit(
+        screen.blit(
             fps_text,
             (15,50)
         )
 
-    pygame.display.flip()
+        pygame.display.flip()
 
 pygame.quit()
